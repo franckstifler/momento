@@ -7,19 +7,19 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Hello Momento!</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <title>Momento</title>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/assets/app.css") %>">
   </head>
 
   <body>
     <div class="container">
       <header class="header">
-        <nav role="navigation">
-          <ul class="nav nav-pills pull-right">
+        <nav class="navbar">
+          <ul>
+            <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
             <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
           </ul>
         </nav>
-        <span class="logo"></span>
       </header>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
@@ -30,6 +30,6 @@
       </main>
 
     </div> <!-- /container -->
-    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <script src="<%= static_path(@conn, "/assets/app.js") %>"></script>
   </body>
 </html>
