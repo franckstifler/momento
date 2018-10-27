@@ -17,6 +17,10 @@ config :momento, MomentoWeb.Endpoint,
   pubsub: [name: Momento.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+config :momento, Momento.Guardian,
+        issuer: "momento",
+        secret_key: "L3zSppjzRfnHUvhTAFzd+NBYOv91ms6Xokl0CDmvb0kJcZ4igVYpkMp7ydv6cbQu"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

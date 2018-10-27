@@ -19,8 +19,22 @@ defmodule MomentoWeb.Router do
     get "/", PageController, :index
   end
 
+  pipeline :auth_api do
+    plug Momento.Guardian.AuthPipeline
+  end
+
+
   # Other scopes may use custom stacks.
-  # scope "/api", MomentoWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", MomentoWeb do
+    pipe_through :api
+
+    resources "/users", UserController, only: [:create, :show]
+    post "/users/login", UserController, :sign_in
+  end
+
+  scope "/api", MomentoWeb do
+    pipe_through [:api, :auth_api]
+
+    resources "/users", UserController, only: [:index, :update, :delete]
+  end
 end
