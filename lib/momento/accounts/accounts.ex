@@ -101,4 +101,8 @@ defmodule Momento.Accounts do
   def change_user(%User{} = user) do
     User.changeset(user, %{})
   end
+
+  def find_user(id) do
+    Repo.get(User, id)
+  end
 end

@@ -9,6 +9,8 @@ defmodule Momento.Accounts.User do
     field :username, :string
     field :password, :string, virtual: true
 
+    has_many :slices, Momento.Media.Slice
+
     timestamps()
   end
 

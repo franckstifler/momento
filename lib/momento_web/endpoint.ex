@@ -39,6 +39,8 @@ defmodule MomentoWeb.Endpoint do
 
   plug MomentoWeb.Router
 
+  # plug Absinthe.Plug, schema: MomentoWeb.
+
   @doc """
   Callback invoked for dynamically configuring the endpoint.
 
