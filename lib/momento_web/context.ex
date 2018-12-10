@@ -2,7 +2,7 @@ defmodule MomentoWeb.Context do
   @behaviour Plug
 
   import Plug.Conn
-  import Ecto.Query, only: [where: 2, first: 1]
+  import Ecto.Query, only: [first: 1]
 
   alias Momento.{Repo, Accounts}
 
