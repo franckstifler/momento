@@ -21,6 +21,11 @@ defmodule MomentoWeb.Schema do
             arg :id, non_null(:id)
             resolve &Resolvers.Accounts.find_user/3
         end
+
+        @desc "Get all slices"
+        field :slices, list_of(:slice) do
+            resolve &Resolvers.Media.list_slices/3
+        end
     end
 
     mutation do
@@ -29,6 +34,7 @@ defmodule MomentoWeb.Schema do
         field :create_slice, type: :slice do
             arg :start_time, non_null(:integer)
             arg :end_time, non_null(:integer)
+            arg :url, non_null(:string)
 
             resolve &Resolvers.Media.create_slice/3
         end

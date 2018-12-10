@@ -6,6 +6,8 @@ defmodule Momento.Media.Video do
   schema "videos" do
     field :url, :string
 
+    has_many(:slices, Momento.Media.Slice)
+
     timestamps()
   end
 
