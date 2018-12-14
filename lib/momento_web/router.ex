@@ -19,32 +19,15 @@ defmodule MomentoWeb.Router do
     get "/", PageController, :index
   end
 
-  pipeline :auth_api do
-    plug Momento.Guardian.AuthPipeline
-  end
-
   pipeline :graphql do
     plug MomentoWeb.Context
   end
 
 
-  # Other scopes may use custom stacks.
-  scope "/api", MomentoWeb do
-    pipe_through :api
-
-    resources "/users", UserController, only: [:create, :show]
-    post "/session", UserController, :sign_in
-
-  end
-
-  scope "/api", MomentoWeb do
-    pipe_through [:api, :auth_api]
-
-    resources "/users", UserController, only: [:index, :update, :delete]
-  end
-
-  scope "/api" do
+  scope "/" do
     pipe_through [:api, :graphql]
+
+    forward "/api", Absinthe.Plug, schema: MomentoWeb.Schema
 
     forward "/graphiql", Absinthe.Plug.GraphiQL,
             schema: MomentoWeb.Schema

@@ -12,8 +12,8 @@ defmodule Momento.Auth do
 
   defp check_password(user, password) do
     case Comeonin.Bcrypt.checkpw(password, user.password_hash) do
-      true -> Momento.Guardian.encode_and_sign(user)
-      false -> {:error, :unauthorized,  "Invalid username or password."}
+      true -> {:ok, user}
+      false -> :error
     end
   end
 end

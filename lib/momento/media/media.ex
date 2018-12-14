@@ -35,7 +35,7 @@ defmodule Momento.Media do
       ** (Ecto.NoResultsError)
 
   """
-  def get_video!(id), do: Repo.get!(Video, id)
+  def get_video(id), do: Repo.get(Video, id)
 
   @doc """
   Creates a video.
@@ -163,18 +163,16 @@ defmodule Momento.Media do
 
   """
   def create_slice(user, attrs \\ %{}) do
-    # video = AIzaSyDSBBZnSQBcMi8iXGWqUKry2JwquKpk7ZU
-    # https://www.youtube.com/watch?v=1ky-RguIRRs
-    # curl -i -G -d "id=Ks-_Mh1QhMc&part=snippet%2CcontentDetails%2Cstatistics&key=AIzaSyDSBBZnSQBcMi8iXGWqUKry2JwquKpk7ZU" https://www.googleapis.com/youtube/v3/videos
-    # curl -i -G -d "id=1ky-RguIRRs&part=snippet%2CcontentDetails%2Cstatistics&key=AIzaSyDSBBZnSQBcMi8iXGWqUKry2JwquKpk7ZU" https://www.googleapis.com/youtube/v3/videos
-
     video =
-      case Repo.get_by(Video, url: attrs["url"]) do
+      case Repo.get_by(Video, url: attrs.url) do
         nil ->
           {:ok, video} = create_video(attrs)
           video
-        video -> video
+
+        video ->
+          video
       end
+
     %Slice{}
     |> Slice.changeset(attrs)
     |> Ecto.Changeset.put_change(:user_id, user.id)
