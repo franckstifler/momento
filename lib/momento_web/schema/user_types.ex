@@ -18,4 +18,9 @@ defmodule MomentoWeb.Schema.UserTypes do
         field :token, :string
         field :user, :user
     end
+
+    object :user_result do
+        field :errors, list_of(:input_error)
+        field :user, :user
+    end
 end

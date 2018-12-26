@@ -10,7 +10,9 @@ defmodule MomentoWeb.Resolvers.Media do
   def create_slice(_parent, args, %{context: context}) do
     case context do
       %{current_user: user} ->
-        Momento.Media.create_slice(user, args)
+        with {:ok, slice} <- Momento.Media.create_slice(user, args) do
+          {:ok, %{slice: slice}}
+        end
 
       _ ->
         {:error, "unauthorized"}
@@ -18,7 +20,6 @@ defmodule MomentoWeb.Resolvers.Media do
   end
 
   def get_slice_video(%Momento.Media.Slice{video_id: id}, _attrs, _) do
-    IO.inspect id
     video = Momento.Media.get_video(id)
     {:ok, video}
   end

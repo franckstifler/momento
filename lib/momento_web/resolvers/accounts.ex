@@ -27,6 +27,8 @@ defmodule MomentoWeb.Resolvers.Accounts do
   end
 
   def create_user(_parent, user, _resolution) do
-    Momento.Accounts.create_user(user)
+    with {:ok, user} <- Momento.Accounts.create_user(user) do
+      {:ok, %{user: user}}
+    end
   end
 end

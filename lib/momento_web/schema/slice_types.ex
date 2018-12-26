@@ -13,4 +13,9 @@ defmodule MomentoWeb.Schema.SliceTypes do
     field :user, :user
     field :published_at, :naive_datetime
   end
+
+  object :slice_result do
+    field :slice, :slice
+    field :errors, list_of(:input_error)
+  end
 end
