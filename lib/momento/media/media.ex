@@ -164,20 +164,25 @@ defmodule Momento.Media do
   """
   def create_slice(user, attrs \\ %{}) do
     video =
-      case Repo.get_by(Video, url: attrs.url) do
+      case Repo.get_by(Video, url: Map.get(attrs, :url, "")) do
         nil ->
-          {:ok, video} = create_video(attrs)
-          video
+          create_video(attrs)
 
         video ->
-          video
+          {:ok, video}
       end
 
-    %Slice{}
-    |> Slice.changeset(attrs)
-    |> Ecto.Changeset.put_change(:user_id, user.id)
-    |> Ecto.Changeset.put_change(:video_id, video.id)
-    |> Repo.insert()
+    case video do
+      {:ok, video} ->
+        %Slice{}
+        |> Slice.changeset(attrs)
+        |> Ecto.Changeset.put_change(:user_id, user.id)
+        |> Ecto.Changeset.put_change(:video_id, video.id)
+        |> Repo.insert()
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
