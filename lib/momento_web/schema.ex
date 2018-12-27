@@ -1,4 +1,88 @@
 defmodule MomentoWeb.Schema do
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   use Absinthe.Schema
 
   import_types(Absinthe.Type.Custom)
@@ -16,11 +100,26 @@ defmodule MomentoWeb.Schema do
   end
 
   def middleware(list, _field, %{identifier: :mutation}) do
-      list ++ [ChangesetErrors]
+    list ++ [ChangesetErrors]
   end
 
   def middleware(list, _arg1, _arg2) do
-      list
+    list
+  end
+
+  def plugins() do
+    [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
+  end
+
+  def dataloader do
+    alias Momento.Media
+
+    Dataloader.new()
+    |> Dataloader.add_source(Media, Media.data())
+  end
+
+  def context(ctx) do
+    Map.put(ctx, :loader, dataloader())
   end
 
   query do

@@ -8,6 +8,14 @@ defmodule Momento.Media do
 
   alias Momento.Media.Video
 
+  def data do
+    Dataloader.Ecto.new(Repo, query: &query/2)
+  end
+
+  def query(queryable, _) do
+    queryable
+  end
+
   @doc """
   Returns the list of videos.
 

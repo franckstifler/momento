@@ -6,9 +6,9 @@ defmodule Momento.Mixfile do
       app: :momento,
       version: "0.0.1",
       elixir: "~> 1.4",
-      elixirc_paths: elixirc_paths(Mix.env),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers,
-      start_permanent: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
     ]
@@ -26,7 +26,7 @@ defmodule Momento.Mixfile do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
   #
@@ -42,11 +42,12 @@ defmodule Momento.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:comeonin, "~> 4.0"},
-      {:bcrypt_elixir,"~> 1.0"},
+      {:bcrypt_elixir, "~> 1.0"},
       {:guardian, "~> 1.0"},
       {:absinthe, "~> 1.4"},
       {:absinthe_plug, "~> 1.4"},
       {:absinthe_ecto, ">= 0.0.0"},
+      {:dataloader, "~> 1.0.0"}
     ]
   end
 
