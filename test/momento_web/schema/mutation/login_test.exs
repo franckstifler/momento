@@ -4,8 +4,13 @@ defmodule MomentoWeb.Schema.Mutation.LoginTest do
   @query """
   mutation ($email: String!, $username: String!, $password: String!) {
     create_user(email: $email, password: $password, username: $username) {
-      username
-      email
+      errors {
+        key message
+      }
+      user {
+        username
+        email
+      }
     }
   }
   """
@@ -21,8 +26,11 @@ defmodule MomentoWeb.Schema.Mutation.LoginTest do
     assert %{
              "data" => %{
                "create_user" => %{
-                 "username" => user.username,
-                 "email" => user.email
+                 "user" => %{
+                   "username" => user.username,
+                   "email" => user.email
+                 },
+                 "errors" => nil
                }
              }
            } == json_response(response, 200)

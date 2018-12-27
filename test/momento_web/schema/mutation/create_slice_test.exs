@@ -4,10 +4,12 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
   @query """
   mutation($url: String!, $start_time: Int!, $end_time: Int!) {
     createSlice(start_time: $start_time, end_time: $end_time, url: $url) {
-      end_time
-      start_time
-      video {
-        url
+      errors{
+        key message
+      }
+      slice{
+        start_time
+        end_time
       }
     }
   }
@@ -31,15 +33,43 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
 
     assert %{
              "data" => %{
-               "createSlice" => %{
-                 "video" => %{
-                   "url" => slice.url
-                 },
-                 "end_time" => slice.end_time,
-                 "start_time" => slice.start_time
-               }
+               "createSlice" => data
              }
-           } == json_response(response, 200)
+           } = json_response(response, 200)
+
+    assert is_nil(data["errors"])
+
+    assert %{
+        "end_time" => slice.end_time,
+        "start_time" => slice.start_time
+    } == data["slice"]
+  end
+
+  test "Fails to create when duration is invalid" do
+    user = Factory.create_user()
+    conn = put_auth_header(build_conn(), user)
+
+    slice = %{
+      url: "youtube.com/test",
+      end_time: 90,
+      start_time: 90
+    }
+
+    response =
+      post(conn, "/api", %{
+        query: @query,
+        variables: slice
+      })
+
+    assert %{
+             "data" => %{
+               "createSlice" => data
+             }
+           } = json_response(response, 200)
+
+    assert is_list(data["errors"])
+    assert length(data["errors"]) > 0
+    assert is_nil(data["slice"])
   end
 
   def put_auth_header(conn, user) do

@@ -25,7 +25,6 @@ defmodule MomentoWeb.FallbackController do
   end
 
   def call(conn, {:error, :unauthorized, error}) do
-    IO.inspect error;
     conn
     |> put_status(:unauthorized)
     |> render(MomentoWeb.CredentialView, "credential.json", error: error)
