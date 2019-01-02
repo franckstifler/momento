@@ -123,7 +123,7 @@ defmodule Momento.Media do
   """
   def list_slices do
     Repo.all(Slice)
-    |> Repo.preload([:tags, :video])
+    # |> Repo.preload([:tags, :video])
   end
 
   def list_slices(user, %{date: date}) do
@@ -160,7 +160,7 @@ defmodule Momento.Media do
   def get_slice!(id) do
     Slice
     |> Repo.get!(id)
-    |> Repo.preload([:video, :tags])
+    # |> Repo.preload([:video, :tags])
   end
 
   @doc """
