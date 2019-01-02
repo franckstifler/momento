@@ -146,6 +146,7 @@ defmodule MomentoWeb.Schema do
       arg(:start_time, non_null(:integer))
       arg(:end_time, non_null(:integer))
       arg(:url, non_null(:string))
+      arg(:tags, non_null(:string))
 
       resolve(&Resolvers.Media.create_slice/3)
     end

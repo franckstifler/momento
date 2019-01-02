@@ -10,6 +10,7 @@ defmodule Momento.Media.Slice do
 
     belongs_to(:user, Momento.Accounts.User)
     belongs_to(:video, Momento.Media.Video)
+    many_to_many(:tags, Momento.Media.Tag, join_through: "slices_tags", on_replace: :delete)
 
     timestamps()
   end
@@ -20,6 +21,7 @@ defmodule Momento.Media.Slice do
     |> cast(attrs, [:start_time, :end_time])
     |> validate_required([:start_time, :end_time])
     |> check_length()
+    # |> put_assoc(:tags, parse_tags(attrs))
   end
 
   @min_time 3

@@ -1,5 +1,5 @@
 defmodule MomentoWeb.Resolvers.Media do
-  import Absinthe.Resolution.Helpers, only: [on_load: 2]
+  # import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
   def list_slices(%Momento.Accounts.User{} = author, args, _resolution) do
     {:ok, Momento.Media.list_slices(author, args)}

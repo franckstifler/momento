@@ -110,7 +110,7 @@ defmodule Momento.Media do
     Video.changeset(video, %{})
   end
 
-  alias Momento.Media.Slice
+  alias Momento.Media.{Slice, Tag}
 
   @doc """
   Returns the list of slices.
@@ -123,6 +123,7 @@ defmodule Momento.Media do
   """
   def list_slices do
     Repo.all(Slice)
+    |> Repo.preload([:tags, :video])
   end
 
   def list_slices(user, %{date: date}) do
@@ -156,7 +157,11 @@ defmodule Momento.Media do
       ** (Ecto.NoResultsError)
 
   """
-  def get_slice!(id), do: Repo.get!(Slice, id)
+  def get_slice!(id) do
+    Slice
+    |> Repo.get!(id)
+    |> Repo.preload([:video, :tags])
+  end
 
   @doc """
   Creates a slice.
@@ -171,26 +176,55 @@ defmodule Momento.Media do
 
   """
   def create_slice(user, attrs \\ %{}) do
-    video =
-      case Repo.get_by(Video, url: Map.get(attrs, :url, "")) do
-        nil ->
-          create_video(attrs)
+    Ecto.Multi.new()
+    |> Ecto.Multi.run(:video, &insert_and_get_video(&1, attrs))
+    |> Ecto.Multi.run(:tags, &insert_and_get_all_tags(&1, attrs))
+    |> Ecto.Multi.run(:slice, &insert_slice(&1, user, attrs))
+    |> Repo.transaction()
+    |> case do
+      {:error, _name, failed_changes, _changes_so_far} ->
+        {:error, failed_changes}
 
-        video ->
-          {:ok, video}
-      end
-
-    case video do
-      {:ok, video} ->
-        %Slice{}
-        |> Slice.changeset(attrs)
-        |> Ecto.Changeset.put_change(:user_id, user.id)
-        |> Ecto.Changeset.put_change(:video_id, video.id)
-        |> Repo.insert()
-
-      {:error, changeset} ->
-        {:error, changeset}
+      {:ok, changes} ->
+        {:ok, changes.slice}
     end
+  end
+
+  defp insert_and_get_video(_changes, params) do
+    case Repo.get_by(Video, url: Map.get(params, :url, "")) do
+      nil ->
+        create_video(params)
+
+      video ->
+        {:ok, video}
+    end
+  end
+
+  defp insert_and_get_all_tags(_changes, params) do
+    case Tag.parse_tags(Map.get(params, :tags, "")) do
+      [] ->
+        {:ok, []}
+
+      tags ->
+        maps =
+          Enum.map(
+            tags,
+            &%{name: &1, updated_at: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)}
+          )
+
+        Repo.insert_all(Tag, maps, on_conflict: :nothing)
+        {:ok, Repo.all(from(t in Tag, where: t.name in ^tags))}
+    end
+  end
+
+  defp insert_slice(%{video: video, tags: tags}, user, params) do
+    changeset =
+      Slice.changeset(%Slice{}, params)
+      |> Ecto.Changeset.put_assoc(:tags, tags)
+      |> Ecto.Changeset.put_assoc(:video, video)
+      |> Ecto.Changeset.put_change(:user_id, user.id)
+
+    Repo.insert(changeset)
   end
 
   @doc """

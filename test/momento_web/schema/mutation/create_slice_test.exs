@@ -2,14 +2,17 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
   use MomentoWeb.ConnCase, async: true
 
   @query """
-  mutation($url: String!, $start_time: Int!, $end_time: Int!) {
-    createSlice(start_time: $start_time, end_time: $end_time, url: $url) {
+  mutation($url: String!, $start_time: Int!, $end_time: Int!, $tags: String!) {
+    createSlice(start_time: $start_time, end_time: $end_time, url: $url, tags: $tags) {
       errors{
         key message
       }
       slice{
         start_time
         end_time
+        tags{
+          name
+        }
       }
     }
   }
@@ -22,7 +25,8 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
     slice = %{
       url: "youtube.com/testvideo",
       start_time: 100,
-      end_time: 105
+      end_time: 105,
+      tags: "tag1, tag2"
     }
 
     response =
@@ -40,9 +44,12 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
     assert is_nil(data["errors"])
 
     assert %{
-        "end_time" => slice.end_time,
-        "start_time" => slice.start_time
-    } == data["slice"]
+             "end_time" => slice.end_time,
+             "start_time" => slice.start_time,
+             "tags" => [%{"name" => "tag1"}, %{"name" => "tag2"}]
+           } == data["slice"]
+
+    assert length(data["slice"]["tags"]) == 2
   end
 
   test "Fails to create when duration is invalid" do
@@ -52,7 +59,8 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
     slice = %{
       url: "youtube.com/test",
       end_time: 90,
-      start_time: 90
+      start_time: 90,
+      tags: ""
     }
 
     response =
