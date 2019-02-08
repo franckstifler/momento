@@ -1,88 +1,4 @@
 defmodule MomentoWeb.Schema do
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   use Absinthe.Schema
 
   import_types(Absinthe.Type.Custom)
@@ -90,6 +6,7 @@ defmodule MomentoWeb.Schema do
   import_types(MomentoWeb.Schema.UserTypes)
   import_types(MomentoWeb.Schema.SliceTypes)
   import_types(MomentoWeb.Schema.VideoTypes)
+  import_types(MomentoWeb.Schema.CommentTypes)
 
   alias MomentoWeb.Resolvers
   alias MomentoWeb.Middleware.ChangesetErrors
@@ -112,10 +29,11 @@ defmodule MomentoWeb.Schema do
   end
 
   def dataloader do
-    alias Momento.Media
+    alias Momento.{Accounts, Media}
 
     Dataloader.new()
     |> Dataloader.add_source(Media, Media.data())
+    |> Dataloader.add_source(Accounts, Accounts.data())
   end
 
   def context(ctx) do
@@ -138,6 +56,12 @@ defmodule MomentoWeb.Schema do
     field :slices, list_of(:slice) do
       resolve(&Resolvers.Media.list_slices/3)
     end
+
+    @desc "Get a single slice"
+    field :slice, :slice do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.Media.find_slice/3)
+    end
   end
 
   mutation do
@@ -151,6 +75,7 @@ defmodule MomentoWeb.Schema do
       resolve(&Resolvers.Media.create_slice/3)
     end
 
+    @desc "Login with credentials"
     field :login, type: :session do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))
@@ -158,12 +83,21 @@ defmodule MomentoWeb.Schema do
       resolve(&Resolvers.Accounts.login/3)
     end
 
+    @desc "create a user account"
     field :create_user, type: :user_result do
       arg(:email, non_null(:string))
       arg(:username, non_null(:string))
       arg(:password, non_null(:string))
 
       resolve(&Resolvers.Accounts.create_user/3)
+    end
+
+    @desc "add a comment to a slice"
+    field :create_comment, type: :comment_result do
+      arg(:comment, non_null(:string))
+      arg(:slice_id, non_null(:id))
+
+      resolve(&Resolvers.Media.create_comment/3)
     end
   end
 end

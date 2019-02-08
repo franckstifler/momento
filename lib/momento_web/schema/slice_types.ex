@@ -8,9 +8,10 @@ defmodule MomentoWeb.Schema.SliceTypes do
     field(:start_time, :integer)
     field(:end_time, :integer)
     field(:video, :video, resolve: Helpers.dataloader(Momento.Media))
-    field(:user, :user)
+    field(:user, :user, resolve: Helpers.dataloader(Momento.Accounts))
     field(:published_at, :naive_datetime)
     field(:tags, list_of(:tag), resolve: Helpers.dataloader(Momento.Media))
+    field(:comments, list_of(:comment), resolve: Helpers.dataloader(Momento.Media))
   end
 
   object :slice_result do

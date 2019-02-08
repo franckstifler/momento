@@ -123,7 +123,7 @@ defmodule Momento.Media do
   """
   def list_slices do
     Repo.all(Slice)
-    |> Repo.preload([:tags, :video])
+    # |> Repo.preload([:tags, :video])
   end
 
   def list_slices(user, %{date: date}) do
@@ -157,10 +157,10 @@ defmodule Momento.Media do
       ** (Ecto.NoResultsError)
 
   """
-  def get_slice!(id) do
+  def get_slice(id) do
     Slice
-    |> Repo.get!(id)
-    |> Repo.preload([:video, :tags])
+    |> Repo.get(id)
+    # |> Repo.preload([:video, :tags])
   end
 
   @doc """
@@ -272,5 +272,20 @@ defmodule Momento.Media do
   """
   def change_slice(%Slice{} = slice) do
     Slice.changeset(slice, %{})
+  end
+
+  alias Momento.Media.Comment
+
+  def create_comment(user, attrs) do
+    %Comment{}
+    |> Comment.changeset(attrs)
+    |> Ecto.Changeset.put_change(:user_id, user.id)
+    |> Repo.insert()
+  end
+
+  def update_comment(%Comment{} = comment, attrs) do
+    comment
+    |> Comment.changeset(attrs)
+    |> Repo.update()
   end
 end

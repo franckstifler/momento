@@ -10,6 +10,7 @@ defmodule Momento.Accounts.User do
     field :password, :string, virtual: true
 
     has_many :slices, Momento.Media.Slice
+    has_many :comments, Momento.Media.Comment
 
     timestamps()
   end

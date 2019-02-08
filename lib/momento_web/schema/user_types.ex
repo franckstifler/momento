@@ -7,7 +7,7 @@ defmodule MomentoWeb.Schema.UserTypes do
     field(:email, :string)
     field(:username, :string)
 
-    field(:slices, list_of(:slice), resolve: Helpers.dataloader(Momento.Media))
+    # field(:slices, list_of(:slice), resolve: Helpers.dataloader(Momento.Media))
   end
 
   object :session do
