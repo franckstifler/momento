@@ -2,15 +2,15 @@ defmodule Momento.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   schema "users" do
-    field :email, :string
-    field :password_hash, :string
-    field :username, :string
-    field :password, :string, virtual: true
+    field(:email, :string)
+    field(:password_hash, :string)
+    field(:username, :string)
+    field(:password, :string, virtual: true)
 
-    has_many :slices, Momento.Media.Slice
-    has_many :comments, Momento.Media.Comment
+    has_many(:slices, Momento.Media.Slice)
+    has_many(:comments, Momento.Media.Comment)
+    has_many(:likes, Momento.Media.Like)
 
     timestamps()
   end
@@ -29,7 +29,9 @@ defmodule Momento.Accounts.User do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: pass}} ->
         put_change(changeset, :password_hash, Comeonin.Bcrypt.hashpwsalt(pass))
-      _ -> changeset
+
+      _ ->
+        changeset
     end
   end
 end

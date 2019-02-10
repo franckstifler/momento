@@ -9,7 +9,7 @@ defmodule MomentoWeb.Schema do
   import_types(MomentoWeb.Schema.CommentTypes)
 
   alias MomentoWeb.Resolvers
-  alias MomentoWeb.Middleware.ChangesetErrors
+  alias MomentoWeb.Middleware.{ChangesetErrors, Authorize}
 
   object :input_error do
     field(:key, non_null(:string))
@@ -98,6 +98,30 @@ defmodule MomentoWeb.Schema do
       arg(:slice_id, non_null(:id))
 
       resolve(&Resolvers.Media.create_comment/3)
+    end
+
+    @desc "delete a comment of a slice"
+    field :delete_comment, type: :comment do
+      arg(:slice_id, non_null(:id))
+      middleware(Authorize, :any)
+
+      resolve(&Resolvers.Media.delete_comment/3)
+    end
+
+    @desc "Add like to slice"
+    field :create_like, type: :like_result do
+      arg(:slice_id, non_null(:id))
+      middleware(Authorize, :nothing)
+
+      resolve(&Resolvers.Media.create_like/3)
+    end
+
+    @desc "Remove a like"
+    field :delete_like, type: :like_result do
+      arg(:slice_id, non_null(:id))
+      middleware(Authorize, :nothing)
+
+      resolve(&Resolvers.Media.delete_like/3)
     end
   end
 end

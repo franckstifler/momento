@@ -122,8 +122,15 @@ defmodule Momento.Media do
 
   """
   def list_slices do
-    Repo.all(Slice)
-    # |> Repo.preload([:tags, :video])
+    query =
+      from(
+        s in Slice,
+        left_join: l in assoc(s, :likes),
+        group_by: s.id,
+        select: %{s | likes: count(l.id)}
+      )
+
+    Repo.all(query)
   end
 
   def list_slices(user, %{date: date}) do
@@ -146,21 +153,26 @@ defmodule Momento.Media do
   @doc """
   Gets a single slice.
 
-  Raises `Ecto.NoResultsError` if the Slice does not exist.
-
   ## Examples
 
-      iex> get_slice!(123)
+      iex> get_slice(123)
       %Slice{}
 
-      iex> get_slice!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_slice(456)
+      ** nil
 
   """
   def get_slice(id) do
-    Slice
-    |> Repo.get(id)
-    # |> Repo.preload([:video, :tags])
+    query =
+      from(
+        s in Slice,
+        where: [id: ^id],
+        left_join: l in assoc(s, :likes),
+        group_by: s.id,
+        select: %{s | likes: count(l.id)}
+      )
+
+    Repo.one(query)
   end
 
   @doc """
@@ -276,6 +288,10 @@ defmodule Momento.Media do
 
   alias Momento.Media.Comment
 
+  def get_comment(user, slice_id) do
+    Repo.get_by(Comment, user_id: user.id, slice_id: slice_id)
+  end
+
   def create_comment(user, attrs) do
     %Comment{}
     |> Comment.changeset(attrs)
@@ -287,5 +303,30 @@ defmodule Momento.Media do
     comment
     |> Comment.changeset(attrs)
     |> Repo.update()
+  end
+
+  def delete_comment(%Comment{} = comment) do
+    Repo.delete(Comment, comment)
+  end
+
+  alias Momento.Media.Like
+
+  def get_like_by_user_and_slice(user, slice_id) do
+    Repo.get_by(Like, user_id: user.id, slice_id: slice_id)
+  end
+
+  def create_like(user, attrs) do
+    %Like{}
+    |> Like.changeset(attrs)
+    |> Ecto.Changeset.put_change(:user_id, user.id)
+    |> Repo.insert()
+  end
+
+  def delete_like(%Like{} = like) do
+    Repo.delete(like)
+  end
+
+  def delete_like(_) do
+    {:error, "Like not found"}
   end
 end

@@ -12,6 +12,7 @@ defmodule MomentoWeb.Schema.SliceTypes do
     field(:published_at, :naive_datetime)
     field(:tags, list_of(:tag), resolve: Helpers.dataloader(Momento.Media))
     field(:comments, list_of(:comment), resolve: Helpers.dataloader(Momento.Media))
+    field(:likes, :integer)
   end
 
   object :slice_result do
@@ -22,5 +23,15 @@ defmodule MomentoWeb.Schema.SliceTypes do
   object :tag do
     field(:id, :id)
     field(:name, :string)
+  end
+
+  object :like do
+    field(:id, :id)
+    field(:slice_id, :id)
+  end
+
+  object :like_result do
+    field(:like, :like)
+    field(:errors, list_of(:input_error))
   end
 end
