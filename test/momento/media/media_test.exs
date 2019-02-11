@@ -89,7 +89,7 @@ defmodule Momento.MediaTest do
       slice = slice_fixture()
       slices =
         Media.list_slices()
-        |> Enum.map(&(Repo.preload(&1, [:video, :tags])))
+        |> Repo.preload([:video, :tags])
       assert slices == [slice]
     end
 
