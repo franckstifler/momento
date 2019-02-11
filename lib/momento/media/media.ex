@@ -198,7 +198,7 @@ defmodule Momento.Media do
         {:error, failed_changes}
 
       {:ok, changes} ->
-        {:ok, changes.slice}
+        {:ok, %{changes.slice | likes: 0}}
     end
   end
 
@@ -288,8 +288,8 @@ defmodule Momento.Media do
 
   alias Momento.Media.Comment
 
-  def get_comment(user, slice_id) do
-    Repo.get_by(Comment, user_id: user.id, slice_id: slice_id)
+  def get_comment(user, comment_id) do
+    Repo.get_by(Comment, id: comment_id, user_id: user.id)
   end
 
   def create_comment(user, attrs) do
@@ -306,7 +306,11 @@ defmodule Momento.Media do
   end
 
   def delete_comment(%Comment{} = comment) do
-    Repo.delete(Comment, comment)
+    Repo.delete(comment)
+  end
+
+  def delete_comment(_) do
+    {:error, "No comment found"}
   end
 
   alias Momento.Media.Like
