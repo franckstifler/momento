@@ -71,6 +71,7 @@ defmodule MomentoWeb.Schema do
       arg(:end_time, non_null(:integer))
       arg(:url, non_null(:string))
       arg(:tags, non_null(:string))
+      middleware(Authorize, :nothing)
 
       resolve(&Resolvers.Media.create_slice/3)
     end
@@ -96,13 +97,14 @@ defmodule MomentoWeb.Schema do
     field :create_comment, type: :comment_result do
       arg(:comment, non_null(:string))
       arg(:slice_id, non_null(:id))
+      middleware(Authorize, :nothing)
 
       resolve(&Resolvers.Media.create_comment/3)
     end
 
     @desc "delete a comment of a slice"
-    field :delete_comment, type: :comment do
-      arg(:slice_id, non_null(:id))
+    field :delete_comment, type: :comment_result do
+      arg(:comment_id, non_null(:integer))
       middleware(Authorize, :any)
 
       resolve(&Resolvers.Media.delete_comment/3)
@@ -110,7 +112,7 @@ defmodule MomentoWeb.Schema do
 
     @desc "Add like to slice"
     field :create_like, type: :like_result do
-      arg(:slice_id, non_null(:id))
+      arg(:slice_id, non_null(:integer))
       middleware(Authorize, :nothing)
 
       resolve(&Resolvers.Media.create_like/3)
@@ -118,7 +120,7 @@ defmodule MomentoWeb.Schema do
 
     @desc "Remove a like"
     field :delete_like, type: :like_result do
-      arg(:slice_id, non_null(:id))
+      arg(:slice_id, non_null(:integer))
       middleware(Authorize, :nothing)
 
       resolve(&Resolvers.Media.delete_like/3)

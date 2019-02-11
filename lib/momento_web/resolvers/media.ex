@@ -15,14 +15,8 @@ defmodule MomentoWeb.Resolvers.Media do
   end
 
   def create_slice(_parent, args, %{context: context}) do
-    case context do
-      %{current_user: user} ->
-        with {:ok, slice} <- Media.create_slice(user, args) do
-          {:ok, %{slice: slice}}
-        end
-
-      _ ->
-        {:error, "unauthorized"}
+    with {:ok, slice} <- Media.create_slice(context.current_user, args) do
+      {:ok, %{slice: slice}}
     end
   end
 
@@ -32,19 +26,13 @@ defmodule MomentoWeb.Resolvers.Media do
   end
 
   def create_comment(_parent, args, %{context: context}) do
-    case context do
-      %{current_user: user} ->
-        with {:ok, comment} <- Media.create_comment(user, args) do
-          {:ok, %{comment: comment}}
-        end
-
-      _ ->
-        {:error, "unauthorized"}
+    with {:ok, comment} <- Media.create_comment(context.current_user, args) do
+      {:ok, %{comment: comment}}
     end
   end
 
   def delete_comment(_parent, args, %{context: context}) do
-    with {:ok, comment} <- Media.get_comment(context.current_user, Map.get(args, :slice_id, "")),
+    with comment <- Media.get_comment(context.current_user, args.comment_id),
          {:ok, comment} <- Media.delete_comment(comment) do
       {:ok, %{comment: comment}}
     end
@@ -57,7 +45,8 @@ defmodule MomentoWeb.Resolvers.Media do
   end
 
   def delete_like(_parent, args, %{context: context}) do
-    with like <- Media.get_like_by_user_and_slice(context.current_user, Map.get(args, :slice_id, "")),
+    with like <-
+           Media.get_like_by_user_and_slice(context.current_user, Map.get(args, :slice_id, "")),
          {:ok, like} <- Media.delete_like(like) do
       {:ok, %{like: like}}
     end
