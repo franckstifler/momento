@@ -27,7 +27,7 @@ defmodule MomentoWeb.Schema.SliceTypes do
 
   object :like do
     field(:id, :id)
-    field(:slice_id, :id)
+    field(:slice_id, :integer)
   end
 
   object :like_result do
