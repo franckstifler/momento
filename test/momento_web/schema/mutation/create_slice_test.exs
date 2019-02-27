@@ -2,14 +2,15 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
   use MomentoWeb.ConnCase, async: true
 
   @query """
-  mutation($url: String!, $start_time: Int!, $end_time: Int!, $tags: String!) {
-    createSlice(start_time: $start_time, end_time: $end_time, url: $url, tags: $tags) {
+  mutation($url: String!, $start_time: Int!, $end_time: Int!, $title: String!, $tags: String!) {
+    createSlice(start_time: $start_time, end_time: $end_time, url: $url, title: $title, tags: $tags) {
       errors{
         key message
       }
       slice{
         start_time
         end_time
+        title
         tags{
           name
         }
@@ -26,6 +27,7 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
       url: "youtube.com/testvideo",
       start_time: 100,
       end_time: 105,
+      title: "YO, a title",
       tags: "tag1, tag2"
     }
 
@@ -46,6 +48,7 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
     assert %{
              "end_time" => slice.end_time,
              "start_time" => slice.start_time,
+             "title" => slice.title,
              "tags" => [%{"name" => "tag1"}, %{"name" => "tag2"}]
            } == data["slice"]
 
@@ -60,6 +63,7 @@ defmodule MomentoWeb.Schema.Mutation.CreateSliceTest do
       url: "youtube.com/test",
       end_time: 90,
       start_time: 90,
+      title: "",
       tags: ""
     }
 

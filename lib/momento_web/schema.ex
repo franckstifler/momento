@@ -1,88 +1,4 @@
 defmodule MomentoWeb.Schema do
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   use Absinthe.Schema
 
   import_types(Absinthe.Type.Custom)
@@ -145,6 +61,7 @@ defmodule MomentoWeb.Schema do
     field :create_slice, type: :slice_result do
       arg(:start_time, non_null(:integer))
       arg(:end_time, non_null(:integer))
+      arg(:title, non_null(:string))
       arg(:url, non_null(:string))
       arg(:tags, non_null(:string))
 

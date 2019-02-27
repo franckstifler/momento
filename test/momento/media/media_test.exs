@@ -66,10 +66,10 @@ defmodule Momento.MediaTest do
   describe "slices" do
     alias Momento.Media.Slice
 
-    @valid_attrs %{end_time: 50, start_time: 42, url: "youtube.com/test"}
-    @update_attrs %{end_time: 53, start_time: 43, url: "youtube.com/test"}
-    @invalid_attrs %{end_time: nil, start_time: nil, url: "nil"}
-    @invalid_duration %{end_time: 10, start_time: 8, url: "youtube"}
+    @valid_attrs %{end_time: 50, start_time: 42, title: "Test title", url: "youtube.com/test"}
+    @update_attrs %{end_time: 53, start_time: 43, title: "updated title", url: "youtube.com/test"}
+    @invalid_attrs %{end_time: nil, start_time: nil, title: nil, url: "nil"}
+    @invalid_duration %{end_time: 10, start_time: 8, title: "ok title", url: "youtube"}
 
     def slice_fixture(attrs \\ %{}) do
       attrs = Enum.into(attrs, @valid_attrs)
@@ -87,12 +87,22 @@ defmodule Momento.MediaTest do
 
     test "list_slices/0 returns all slices" do
       slice = slice_fixture()
-      assert Media.list_slices() == [slice]
+
+      slices =
+        Media.list_slices()
+        |> Momento.Repo.preload([:video, :tags])
+
+      slices == [slice]
     end
 
     test "get_slice!/1 returns the slice with given id" do
       slice = slice_fixture()
-      assert Media.get_slice!(slice.id) == slice
+
+      d_slice =
+        Media.get_slice!(slice.id)
+        |> Momento.Repo.preload([:video, :tags])
+
+      assert d_slice == slice
     end
 
     test "create_slice/1 with valid data creates a slice" do

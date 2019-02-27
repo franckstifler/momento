@@ -5,8 +5,7 @@ defmodule Momento.Media.Slice do
   schema "slices" do
     field(:end_time, :integer)
     field(:start_time, :integer)
-    # field :video_id, :id
-    # field :user_id, :id
+    field(:title, :string)
 
     belongs_to(:user, Momento.Accounts.User)
     belongs_to(:video, Momento.Media.Video)
@@ -18,8 +17,9 @@ defmodule Momento.Media.Slice do
   @doc false
   def changeset(slice, attrs) do
     slice
-    |> cast(attrs, [:start_time, :end_time])
-    |> validate_required([:start_time, :end_time])
+    |> cast(attrs, [:start_time, :end_time, :title])
+    |> validate_required([:start_time, :end_time, :title])
+    |> validate_length(:title, min: 3)
     |> check_length()
     # |> put_assoc(:tags, parse_tags(attrs))
   end

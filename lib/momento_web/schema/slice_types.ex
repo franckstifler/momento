@@ -7,6 +7,7 @@ defmodule MomentoWeb.Schema.SliceTypes do
     field(:id, :id)
     field(:start_time, :integer)
     field(:end_time, :integer)
+    field(:title, :string)
     field(:video, :video, resolve: Helpers.dataloader(Momento.Media))
     field(:user, :user)
     field(:published_at, :naive_datetime)
