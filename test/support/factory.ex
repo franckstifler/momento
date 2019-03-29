@@ -24,10 +24,11 @@ defmodule Factory do
   end
 
   def create_slice do
-    video = create_video
-    user = create_user
+    video = Factory.create_video()
+    user = Factory.create_user()
     int = :erlang.unique_integer([:positive, :monotonic])
     params = %{
+      title: "A title #{int}",
       start_time: 10,
       end_time: 15,
       user_id: user.id,
