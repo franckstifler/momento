@@ -87,6 +87,16 @@ defmodule Momento.MediaTest do
 
     test "list_slices/0 returns all slices" do
       slice = slice_fixture()
+
+      slices =
+        Media.list_slices()
+        |> Repo.preload([:video, :tags])
+      assert slices == [slice]
+    end
+
+    test "get_slice/1 returns the slice with given id" do
+      slice = slice_fixture()
+
       new_slice =
         Media.get_slice(slice.id)
         |> Momento.Repo.preload([:video, :tags])
