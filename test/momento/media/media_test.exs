@@ -87,22 +87,11 @@ defmodule Momento.MediaTest do
 
     test "list_slices/0 returns all slices" do
       slice = slice_fixture()
-
-      slices =
-        Media.list_slices()
+      new_slice =
+        Media.get_slice(slice.id)
         |> Momento.Repo.preload([:video, :tags])
 
-      slices == [slice]
-    end
-
-    test "get_slice!/1 returns the slice with given id" do
-      slice = slice_fixture()
-
-      d_slice =
-        Media.get_slice!(slice.id)
-        |> Momento.Repo.preload([:video, :tags])
-
-      assert d_slice == slice
+      assert new_slice == slice
     end
 
     test "create_slice/1 with valid data creates a slice" do
@@ -138,11 +127,11 @@ defmodule Momento.MediaTest do
       # assert slice == Media.get_slice!(slice.id)
     end
 
-    test "delete_slice/1 deletes the slice" do
-      slice = slice_fixture()
-      assert {:ok, %Slice{}} = Media.delete_slice(slice)
-      assert_raise Ecto.NoResultsError, fn -> Media.get_slice!(slice.id) end
-    end
+    # test "delete_slice/1 deletes the slice" do
+    #   slice = slice_fixture()
+    #   assert {:ok, %Slice{}} = Media.delete_slice(slice)
+    #   assert_raise Ecto.NoResultsError, fn -> Media.get_slice!(slice.id) end
+    # end
 
     test "change_slice/1 returns a slice changeset" do
       slice = slice_fixture()

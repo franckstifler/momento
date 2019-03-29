@@ -1,9 +1,9 @@
 defmodule MomentoWeb.Middleware.ChangesetErrors do
   @behaviour Absinthe.Middleware
 
-  def call(res, _) do
-    with %{errors: [%Ecto.Changeset{} = changeset]} <- res do
-      %{res | value: %{errors: transform_errors(changeset)}, errors: []}
+  def call(resolution, _) do
+    with %{errors: [%Ecto.Changeset{} = changeset]} <- resolution do
+      %{resolution | value: %{errors: transform_errors(changeset)}, errors: []}
     end
   end
 

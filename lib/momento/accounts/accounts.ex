@@ -8,6 +8,10 @@ defmodule Momento.Accounts do
 
   alias Momento.Accounts.User
 
+  def data do
+    # No need for ordering and filtering
+    Dataloader.Ecto.new(Repo)
+  end
   @doc """
   Returns the list of users.
 

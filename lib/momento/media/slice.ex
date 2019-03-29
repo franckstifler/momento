@@ -9,6 +9,8 @@ defmodule Momento.Media.Slice do
 
     belongs_to(:user, Momento.Accounts.User)
     belongs_to(:video, Momento.Media.Video)
+    has_many(:comments, Momento.Media.Comment)
+    has_many(:likes, Momento.Media.Like)
     many_to_many(:tags, Momento.Media.Tag, join_through: "slices_tags", on_replace: :delete)
 
     timestamps()
