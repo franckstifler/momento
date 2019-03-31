@@ -1,17 +1,20 @@
 defmodule Momento.Media.Slice do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Momento.Media.{Video, Comment, Question, Like, Tag}
+  alias Momento.Accounts.User
 
   schema "slices" do
     field(:end_time, :integer)
     field(:start_time, :integer)
     field(:title, :string)
 
-    belongs_to(:user, Momento.Accounts.User)
-    belongs_to(:video, Momento.Media.Video)
-    has_many(:comments, Momento.Media.Comment)
-    has_many(:likes, Momento.Media.Like)
-    many_to_many(:tags, Momento.Media.Tag, join_through: "slices_tags", on_replace: :delete)
+    belongs_to(:user, User)
+    belongs_to(:video, Video)
+    has_many(:comments, Comment)
+    has_one(:question, Question)
+    has_many(:likes, Like)
+    many_to_many(:tags, Tag, join_through: "slices_tags", on_replace: :delete)
 
     timestamps()
   end

@@ -8,7 +8,7 @@ defmodule MomentoWeb.Schema.CommentTypes do
     field(:inserted_at, :naive_datetime)
     field(:update_at, :naive_datetime)
     field(:user, :user, resolve: Helpers.dataloader(Momento.Accounts))
-    field(:user, :user)
+    # field(:user, :user)
   end
 
   object :comment_result do

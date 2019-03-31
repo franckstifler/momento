@@ -7,6 +7,7 @@ defmodule MomentoWeb.Schema do
   import_types(MomentoWeb.Schema.SliceTypes)
   import_types(MomentoWeb.Schema.VideoTypes)
   import_types(MomentoWeb.Schema.CommentTypes)
+  import_types(MomentoWeb.Schema.QuestionTypes)
 
   alias MomentoWeb.Resolvers
   alias MomentoWeb.Middleware.{ChangesetErrors, Authorize}
@@ -72,6 +73,7 @@ defmodule MomentoWeb.Schema do
       arg(:title, non_null(:string))
       arg(:url, non_null(:string))
       arg(:tags, non_null(:string))
+      arg(:question, :question)
       middleware(Authorize, :nothing)
 
       resolve(&Resolvers.Media.create_slice/3)

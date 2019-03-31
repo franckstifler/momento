@@ -6,7 +6,7 @@ defmodule Momento.Media do
   import Ecto.Query, warn: false
   alias Momento.Repo
 
-  alias Momento.Media.Video
+  alias Momento.Media.{Video, Question, Answer}
 
   def data do
     Dataloader.Ecto.new(Repo, query: &query/2)
@@ -192,6 +192,7 @@ defmodule Momento.Media do
     |> Ecto.Multi.run(:video, &insert_and_get_video(&1, attrs))
     |> Ecto.Multi.run(:tags, &insert_and_get_all_tags(&1, attrs))
     |> Ecto.Multi.run(:slice, &insert_slice(&1, user, attrs))
+    |> Ecto.Multi.run(:question, &insert_question(&1, attrs))
     |> Repo.transaction()
     |> case do
       {:error, _name, failed_changes, _changes_so_far} ->
@@ -237,6 +238,24 @@ defmodule Momento.Media do
       |> Ecto.Changeset.put_change(:user_id, user.id)
 
     Repo.insert(changeset)
+  end
+
+  defp insert_question(%{slice: slice}, params) do
+    case question = Map.get(params, :question) do
+      nil ->
+        {:ok, true}
+
+      _ ->
+        changeset =
+          Question.changeset(%Question{}, question)
+          |> Ecto.Changeset.cast_assoc(:answers, with: &Answer.changeset/2, required: true)
+          |> Ecto.Changeset.put_change(:slice_id, slice.id)
+          |> Ecto.Changeset.unique_constraint(:slice_id)
+          |> Answer.verify_answers_length()
+          |> Answer.verify_single_correct_answer()
+
+        Repo.insert(changeset)
+    end
   end
 
   @doc """

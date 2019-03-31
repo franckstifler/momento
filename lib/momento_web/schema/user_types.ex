@@ -1,6 +1,6 @@
 defmodule MomentoWeb.Schema.UserTypes do
   use Absinthe.Schema.Notation
-  alias Absinthe.Resolution.Helpers
+  # alias Absinthe.Resolution.Helpers
 
   object :user do
     field(:id, :id)

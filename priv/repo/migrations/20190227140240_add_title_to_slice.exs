@@ -3,7 +3,7 @@ defmodule Momento.Repo.Migrations.AddTitleToSlice do
 
   def up do
     alter table "slices" do
-      add(:title, :string)
+      add(:title, :string, null: false)
     end
 
     create(index(:slices, [:title]))
