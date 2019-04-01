@@ -20,7 +20,7 @@ defmodule Momento.MediaTest do
     end
 
     test "list_videos/0 returns all videos" do
-      video = video_fixture()
+      _video = video_fixture()
       assert length(Media.list_videos()) >= 1
     end
 
@@ -67,7 +67,7 @@ defmodule Momento.MediaTest do
     alias Momento.Media.Slice
 
     @valid_attrs %{end_time: 50, start_time: 42, title: "Test title", url: "youtube.com/test"}
-    @update_attrs %{end_time: 53, start_time: 43, title: "updated title", url: "youtube.com/test"}
+    # @update_attrs %{end_time: 53, start_time: 43, title: "updated title", url: "youtube.com/test"}
     @invalid_attrs %{end_time: nil, start_time: nil, title: nil, url: "nil"}
     @invalid_duration %{end_time: 10, start_time: 8, title: "ok title", url: "youtube"}
 
@@ -79,7 +79,7 @@ defmodule Momento.MediaTest do
     end
 
     def user_fixture do
-      {ok, user} =
+      {_ok, user} =
         Momento.Accounts.create_user(%{username: "test", email: "test@mail.com", password: "test"})
 
       user
@@ -119,6 +119,29 @@ defmodule Momento.MediaTest do
     test "create_slice/1 with invalid duration returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Media.create_slice(user, @invalid_duration)
+    end
+
+    @question %{text: "a question", answers: [%{text: "asdf", is_correct: false}, %{text: "aqwe", is_correct: true}]}
+    test "create_slice/1 with question should work" do
+      user = user_fixture()
+      slice = Map.put(@valid_attrs, :question, @question)
+      assert {:ok, %Slice{} = inserted_slice} = Media.create_slice(user, slice)
+    end
+
+    @question %{text: "a question", answers: [%{text: "asdf", is_correct: false}]}
+    test "create_slice/1 with less than 2 answers should fail" do
+      user = user_fixture()
+      slice = Map.put(@valid_attrs, :question, @question)
+      assert {:error, changeset} = Media.create_slice(user, slice)
+      assert %{answers: ["should have at least 2 item(s)"]} = errors_on(changeset)
+    end
+
+    @question %{text: "a question", answers: [%{text: "asdf", is_correct: false}, %{text: "asdf", is_correct: false}]}
+    test "create_slice/1 with question should have 1 correct answer" do
+      user = user_fixture()
+      slice = Map.put(@valid_attrs, :question, @question)
+      assert {:error, changeset} = Media.create_slice(user, slice)
+      assert %{answers: ["Provide a single right answer"]} = errors_on(changeset)
     end
 
     # test "update_slice/2 with valid data updates the slice" do

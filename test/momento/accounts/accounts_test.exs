@@ -24,7 +24,7 @@ defmodule Momento.AccountsTest do
     end
 
     test "list_users/0 returns all users" do
-      user = user_fixture()
+      _user = user_fixture()
       users =  Accounts.list_users()
       assert is_list(users)
       assert length(users) > 0
